@@ -23,9 +23,9 @@ class MovieBloc {
   }
 
   fetchMovieList() async {
-    movieListSink.add(ApiResponse.loading('Fetching Popular Movies'));
+    movieListSink.add(ApiResponse.loading('Fetching Trending Movies'));
     try {
-      List<Movie> movies = await _movieRepository.fetchMovieList();
+      List<Movie> movies = await _movieRepository.fetchTrendingMovies();
       movieListSink.add(ApiResponse.completed(movies));
     } catch (e) {
       movieListSink.add(ApiResponse.error(e.toString()));
