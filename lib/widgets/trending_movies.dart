@@ -1,6 +1,7 @@
 import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/api_response.dart';
 import 'package:MovieApp/network/movie_bloc.dart';
+import 'package:MovieApp/screens/detail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,6 +18,29 @@ class _TrendingMoviesState extends State<TrendingMovies> {
   void initState() {
     super.initState();
     _bloc = MovieBloc();
+  }
+
+  String _getRecommendation(dynamic rating) {
+    if (rating >= 9)
+      return 'A definite must watch!';
+    else if (rating >= 8)
+      return 'Highly recommended';
+    else if (rating >= 7)
+      return 'Recommended';
+    else if (rating >= 6)
+      return 'Above average';
+    else if (rating >= 5)
+      return 'Watchable';
+    else if (rating >= 4)
+      return 'Watchable with breaks';
+    else if (rating >= 3)
+      return 'Not recommended';
+    else if (rating >= 2)
+      return 'Alcohol required';
+    else if (rating >= 1)
+      return 'Only for high spirited souls';
+    else
+      return 'A complete disaster';
   }
 
   Widget _buildStarsWidget(dynamic rating) {
@@ -107,66 +131,76 @@ class _TrendingMoviesState extends State<TrendingMovies> {
         itemCount: movies.length,
         itemBuilder: (BuildContext buildContext, int index) {
           Movie movie = movies[index];
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            width: MediaQuery.of(context).size.width,
-            alignment: Alignment.center,
-            child: Stack(
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    topRight: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                  ),
-                  child: Image(
-                    height: double.infinity,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    image: NetworkImage(
-                        'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned(
-                  bottom: 0.0,
-                  child: ClipRRect(
+          return GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DetailScreen(movie: movie),
+              ),
+            ),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              width: MediaQuery.of(context).size.width,
+              alignment: Alignment.center,
+              child: Stack(
+                children: <Widget>[
+                  ClipRRect(
                     borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(30.0),
                       bottomLeft: Radius.circular(30.0),
                       bottomRight: Radius.circular(30.0),
                     ),
-                    child: Container(
-                      height: 250.0,
+                    child: Image(
+                      height: double.infinity,
                       width: MediaQuery.of(context).size.width * 0.9,
-                      padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 40.0),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Colors.black, Colors.transparent])),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            movie.title.toUpperCase(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                      image: NetworkImage(
+                          'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0.0,
+                    right: 0.0,
+                    left: 0.0,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(30.0),
+                      ),
+                      child: Container(
+                        height: 250.0,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 40.0),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [Colors.black, Colors.transparent])),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              movie.title.toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: 10.0),
-                          _buildStarsWidget(movie.voteAverage),
-                        ],
+                            SizedBox(height: 10.0),
+                            _buildStarsWidget(movie.voteAverage),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
