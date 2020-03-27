@@ -20,29 +20,6 @@ class _TrendingMoviesState extends State<TrendingMovies> {
     _bloc = MovieBloc();
   }
 
-  String _getRecommendation(dynamic rating) {
-    if (rating >= 9)
-      return 'A definite must watch!';
-    else if (rating >= 8)
-      return 'Highly recommended';
-    else if (rating >= 7)
-      return 'Recommended';
-    else if (rating >= 6)
-      return 'Above average';
-    else if (rating >= 5)
-      return 'Watchable';
-    else if (rating >= 4)
-      return 'Watchable with breaks';
-    else if (rating >= 3)
-      return 'Not recommended';
-    else if (rating >= 2)
-      return 'Alcohol required';
-    else if (rating >= 1)
-      return 'Only for high spirited souls';
-    else
-      return 'A complete disaster';
-  }
-
   Widget _buildStarsWidget(dynamic rating) {
     bool half = false;
     double no = rating / 2;
@@ -144,19 +121,22 @@ class _TrendingMoviesState extends State<TrendingMovies> {
               alignment: Alignment.center,
               child: Stack(
                 children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10.0),
-                      topRight: Radius.circular(30.0),
-                      bottomLeft: Radius.circular(30.0),
-                      bottomRight: Radius.circular(30.0),
-                    ),
-                    child: Image(
-                      height: double.infinity,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      image: NetworkImage(
-                          'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
-                      fit: BoxFit.cover,
+                  Hero(
+                    tag: 'https://image.tmdb.org/t/p/w342${movie.posterPath}',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(30.0),
+                        bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(30.0),
+                      ),
+                      child: Image(
+                        height: double.infinity,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        image: NetworkImage(
+                            'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   Positioned(

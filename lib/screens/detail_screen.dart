@@ -1,5 +1,8 @@
 import 'package:MovieApp/models/genre_model.dart';
+import 'package:MovieApp/models/movie_cast_response.dart';
 import 'package:MovieApp/models/movie_response.dart';
+import 'package:MovieApp/network/api_response.dart';
+import 'package:MovieApp/network/movie_bloc.dart';
 import 'package:flutter/material.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -12,7 +15,19 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  CastBloc _bloc;
+
   Genre genre = Genre();
+
+  @override
+  void initState() {
+    super.initState();
+    genre = Genre();
+    _buildGenreObjects();
+    print(genreWidgets.length);
+    _bloc = CastBloc(widget.movie.id);
+  }
+
 //  Widget _buildGenres(List<int> genres) {
 //
 //    return Container(
@@ -67,12 +82,63 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    genre = Genre();
-    _buildGenreObjects();
-    print(genreWidgets.length);
+  Widget _buildCasts(List<Cast> castList) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
+          child: Center(
+            child: Text(
+              'WHO ARE THE MAIN ACTORS?',
+              style: TextStyle(
+                color: Theme.of(context).primaryColorDark,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          height: 130.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 10,
+            itemBuilder: (BuildContext context, int index) {
+              Cast cast = castList[index];
+              String firstName = cast.name.split(' ')[0];
+              return Center(
+                child: Container(
+                  width: 100.0,
+                  height: 110.0,
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Column(
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: 40.0,
+                        backgroundImage: NetworkImage(
+                            'https://image.tmdb.org/t/p/w342${cast.profilePath}'),
+                      ),
+                      SizedBox(height: 5.0),
+                      Text(
+                        firstName,
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16.0,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -85,12 +151,16 @@ class _DetailScreenState extends State<DetailScreen> {
           color: Colors.red,
           child: Stack(
             children: <Widget>[
-              Image(
-                width: double.infinity,
-                height: double.infinity,
-                image: NetworkImage(
-                    'https://image.tmdb.org/t/p/w342${widget.movie.posterPath}'),
-                fit: BoxFit.cover,
+              Hero(
+                tag:
+                    'https://image.tmdb.org/t/p/w342${widget.movie.posterPath}',
+                child: Image(
+                  width: double.infinity,
+                  height: double.infinity,
+                  image: NetworkImage(
+                      'https://image.tmdb.org/t/p/w342${widget.movie.posterPath}'),
+                  fit: BoxFit.cover,
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 150.0),
@@ -278,6 +348,27 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                               ),
                             ),
+                            StreamBuilder<ApiResponse<List<Cast>>>(
+                              stream: _bloc.castListStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  switch (snapshot.data.status) {
+                                    case Status.LOADING:
+                                      return CircularProgressIndicator();
+                                      break;
+                                    case Status.COMPLETED:
+                                      return _buildCasts(snapshot.data.data);
+                                      break;
+                                    case Status.ERROR:
+                                      return Text('error');
+                                      break;
+                                  }
+                                } else if (snapshot.hasError) {
+                                  return Text(snapshot.error.toString());
+                                }
+                                return Container();
+                              },
+                            )
                           ],
                         ),
                       );
