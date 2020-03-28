@@ -200,97 +200,100 @@ class _DetailScreenState extends State<DetailScreen> {
                             topRight: Radius.circular(30.0),
                           ),
                         ),
-                        child: ListView(
+                        child: SingleChildScrollView(
                           controller: controller,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 30.0, horizontal: 20.0),
-                              child: Center(
-                                child: Text(
-                                  widget.movie.title.toUpperCase(),
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 25.0,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 30.0, horizontal: 20.0),
+                                child: Center(
+                                  child: Text(
+                                    widget.movie.title.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 25.0,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.5,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
-                              child: Container(
-                                padding: EdgeInsets.all(20.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                child: Column(
-                                  children: <Widget>[
-                                    Center(
-                                      child: Text(
-                                        'ONE SENTENCE REVIEW',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .primaryColorDark,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.2,
+                              Padding(
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+                                child: Container(
+                                  padding: EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Center(
+                                        child: Text(
+                                          'ONE SENTENCE REVIEW',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.2,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 10.0),
-                                    Text(
-                                      _getRecommendation(
-                                          widget.movie.voteAverage),
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
+                                      SizedBox(height: 10.0),
+                                      Text(
+                                        _getRecommendation(
+                                            widget.movie.voteAverage),
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                        ),
+                                        textAlign: TextAlign.justify,
                                       ),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
-                              child: Container(
-                                padding: EdgeInsets.all(20.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                child: Column(
-                                  children: <Widget>[
-                                    Center(
-                                      child: Text(
-                                        'WHAT IS THIS MOVIE ABOUT?',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .primaryColorDark,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.2,
+                              Padding(
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+                                child: Container(
+                                  padding: EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Center(
+                                        child: Text(
+                                          'WHAT IS THIS MOVIE ABOUT?',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.2,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 10.0),
-                                    Text(
-                                      widget.movie.overview,
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 14.0,
+                                      SizedBox(height: 10.0),
+                                      Text(
+                                        widget.movie.overview,
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 14.0,
+                                        ),
+                                        textAlign: TextAlign.justify,
                                       ),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
 //                            Padding(
 //                              padding:
 //                                  EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
@@ -330,61 +333,63 @@ class _DetailScreenState extends State<DetailScreen> {
 ////                                child: Column(children: genreWidgets),
 ////                              ),
 //                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
-                              child: Container(
-                                padding: EdgeInsets.all(20.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                child: Column(
-                                  children: <Widget>[
-                                    Center(
-                                      child: Text(
-                                        'HOW ARE THE REVIEWS?',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .primaryColorDark,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.2,
+                              Padding(
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+                                child: Container(
+                                  padding: EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Center(
+                                        child: Text(
+                                          'HOW ARE THE REVIEWS?',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.2,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 10.0),
-                                    Text(
-                                      rating,
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
+                                      SizedBox(height: 10.0),
+                                      Text(
+                                        rating,
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                        ),
+                                        textAlign: TextAlign.justify,
                                       ),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            FutureBuilder<List<Cast>>(
-                              future: _future,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.none:
-                                    case ConnectionState.waiting:
-                                    case ConnectionState.active:
-                                      return CircularProgressIndicator();
-                                    case ConnectionState.done:
-                                      return _buildCasts(snapshot.data);
+                              FutureBuilder<List<Cast>>(
+                                future: _future,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                      case ConnectionState.active:
+                                        return CircularProgressIndicator();
+                                      case ConnectionState.done:
+                                        return _buildCasts(snapshot.data);
+                                    }
+                                  } else if (snapshot.hasError) {
+                                    return Text(snapshot.error.toString());
                                   }
-                                } else if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                return Container();
-                              },
-                            ),
-                          ],
+                                  return Container();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
