@@ -1,8 +1,7 @@
 import 'package:MovieApp/models/genre_model.dart';
 import 'package:MovieApp/models/movie_cast_response.dart';
 import 'package:MovieApp/models/movie_response.dart';
-import 'package:MovieApp/network/api_response.dart';
-import 'package:MovieApp/network/movie_bloc.dart';
+import 'package:MovieApp/network/movie_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -16,8 +15,6 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  CastBloc _bloc;
-
   Genre genre = Genre();
 
   @override
@@ -26,7 +23,6 @@ class _DetailScreenState extends State<DetailScreen> {
     genre = Genre();
     _buildGenreObjects();
     print(genreWidgets.length);
-    _bloc = CastBloc(widget.movie.id);
   }
 
 //  Widget _buildGenres(List<int> genres) {
@@ -367,20 +363,18 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                               ),
                             ),
-                            StreamBuilder<ApiResponse<List<Cast>>>(
-                              stream: _bloc.castListStream,
+                            FutureBuilder<List<Cast>>(
+                              future: MovieRepository()
+                                  .fetchMovieCastList(widget.movie.id),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  switch (snapshot.data.status) {
-                                    case Status.LOADING:
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.none:
+                                    case ConnectionState.waiting:
+                                    case ConnectionState.active:
                                       return CircularProgressIndicator();
-                                      break;
-                                    case Status.COMPLETED:
-                                      return _buildCasts(snapshot.data.data);
-                                      break;
-                                    case Status.ERROR:
-                                      return Text('error');
-                                      break;
+                                    case ConnectionState.done:
+                                      return _buildCasts(snapshot.data);
                                   }
                                 } else if (snapshot.hasError) {
                                   return Text(snapshot.error.toString());

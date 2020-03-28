@@ -1,6 +1,5 @@
 import 'package:MovieApp/models/movie_response.dart';
-import 'package:MovieApp/network/api_response.dart';
-import 'package:MovieApp/network/movie_bloc.dart';
+import 'package:MovieApp/network/movie_repository.dart';
 import 'package:MovieApp/screens/detail_screen.dart';
 import 'package:MovieApp/screens/see_all_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,12 +12,9 @@ class TrendingMovies extends StatefulWidget {
 }
 
 class _TrendingMoviesState extends State<TrendingMovies> {
-  MovieBloc _bloc;
-
   @override
   void initState() {
     super.initState();
-    _bloc = MovieBloc(1);
   }
 
   Widget _buildStarsWidget(dynamic rating) {
@@ -239,19 +235,22 @@ class _TrendingMoviesState extends State<TrendingMovies> {
               ],
             ),
           ),
-          StreamBuilder<ApiResponse<List<Movie>>>(
-            stream: _bloc.movieListStream,
+          FutureBuilder<MovieResponse>(
+            future: MovieRepository().fetchPopularMovies(1),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                switch (snapshot.data.status) {
-                  case Status.LOADING:
-                    return CircularProgressIndicator();
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    return Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
                     break;
-                  case Status.COMPLETED:
-                    return _buildTrendingMovies(snapshot.data.data);
-                    break;
-                  case Status.ERROR:
-                    return Text('error');
+                  case ConnectionState.done:
+                    return _buildTrendingMovies(snapshot.data.results);
                     break;
                 }
               } else if (snapshot.hasError) {
@@ -267,7 +266,6 @@ class _TrendingMoviesState extends State<TrendingMovies> {
 
   @override
   void dispose() {
-    _bloc.dispose();
     super.dispose();
   }
 }

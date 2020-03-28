@@ -3,6 +3,8 @@ import 'package:MovieApp/network/movie_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'detail_screen.dart';
+
 class SeeAllScreen extends StatefulWidget {
   @override
   _SeeAllScreenState createState() => _SeeAllScreenState();
@@ -78,7 +80,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 //                },
 //              ),
               FutureBuilder<MovieResponse>(
-                future: MovieRepository().fetchPopularMovieList(1),
+                future: MovieRepository().fetchPopularMovies(1),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
@@ -131,7 +133,7 @@ class _MovieListState extends State<MovieList> {
           _scrollController.position.maxScrollExtent -
                   _scrollController.offset <=
               50) {
-        MovieRepository().fetchPopularMovieList(currentPage + 1).then((value) {
+        MovieRepository().fetchPopularMovies(currentPage + 1).then((value) {
           currentPage = value.page;
           setState(() {
             movies.addAll(value.results);
@@ -249,71 +251,82 @@ class _MovieListState extends State<MovieList> {
             itemCount: movies.length,
             itemBuilder: (BuildContext context, int index) {
               Movie movie = movies[index];
-              return Container(
-                margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                height: 300.0,
-                child: Stack(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
-                        bottomLeft: Radius.circular(20.0),
-                        bottomRight: Radius.circular(20.0),
-                      ),
-                      child: Image(
-                        width: double.infinity,
-                        image: NetworkImage(
-                            'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0.0,
-                      right: 0.0,
-                      left: 0.0,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                          bottomLeft: Radius.circular(20.0),
-                          bottomRight: Radius.circular(20.0),
-                        ),
-                        child: Container(
-                          height: 300.0,
-                          width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 40.0),
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                  colors: [
-                                Colors.black,
-                                Colors.transparent,
-                              ])),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                movie.title.toUpperCase(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 10.0),
-                              _buildStarsWidget(movie.voteAverage),
-                            ],
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DetailScreen(movie: movie),
+                  ),
+                ),
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+                  height: 300.0,
+                  child: Stack(
+                    children: <Widget>[
+                      Hero(
+                        tag: 'https://image.tmdb.org/t/p/w342${movie.posterPath}',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                            bottomLeft: Radius.circular(20.0),
+                            bottomRight: Radius.circular(20.0),
+                          ),
+                          child: Image(
+                            width: double.infinity,
+                            image: NetworkImage(
+                                'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        bottom: 0.0,
+                        right: 0.0,
+                        left: 0.0,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                            bottomLeft: Radius.circular(20.0),
+                            bottomRight: Radius.circular(20.0),
+                          ),
+                          child: Container(
+                            height: 300.0,
+                            width: double.infinity,
+                            padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 40.0),
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                  Colors.black,
+                                  Colors.transparent,
+                                ])),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  movie.title.toUpperCase(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 10.0),
+                                _buildStarsWidget(movie.voteAverage),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
