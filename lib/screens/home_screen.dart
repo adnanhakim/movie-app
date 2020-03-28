@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
+    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   void _showToast(BuildContext context) {
@@ -40,9 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   static String _getGreeting(int hour) {
-    if (hour < 12) {
+    print(hour);
+    if (hour > 5 && hour < 12) {
       return 'Good Morning';
-    } else if (hour < 18) {
+    } else if (hour >= 12 && hour < 18) {
       return 'Good Afternoon';
     } else {
       return 'Good Evening';

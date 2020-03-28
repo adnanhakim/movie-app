@@ -23,24 +23,36 @@ class _DetailScreenState extends State<DetailScreen> {
   void initState() {
     super.initState();
     genre = Genre();
-    _buildGenreObjects();
     _movieRepository = MovieRepository();
     _future = _movieRepository.fetchMovieCastList(widget.movie.id);
   }
 
-//  Widget _buildGenres(List<int> genres) {
-//
-//    return Container(
-//      child: ListView.builder(
-//        itemCount: genres.length,
-//        itemBuilder: (BuildContext context, int index) {
-//          String genreName = genre.genreMap[genres[index]];
-//          print(genreName);
-//          return Text(genreName);
-//        },
-//      ),
-//    );
-//  }
+  Widget _buildGenre(String genreName) {
+    return Container(
+      margin: EdgeInsets.only(right: 10.0, bottom: 10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        color: Theme.of(context).primaryColorDark,
+      ),
+      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+      child: Text(
+        genreName,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildGenreList() {
+    List<Widget> widgets = List<Widget>();
+    for (int genreId in widget.movie.genreIds) {
+      String genreName = genre.genreMap[genreId];
+      widgets.add(_buildGenre(genreName));
+    }
+    return widgets;
+  }
 
   String _getRecommendation(dynamic rating) {
     if (rating >= 8.5)
@@ -63,23 +75,6 @@ class _DetailScreenState extends State<DetailScreen> {
       return 'Only for high spirited souls';
     else
       return 'A complete disaster';
-  }
-
-  List<Widget> genreWidgets = List<Widget>();
-  _buildGenreObjects() {
-    for (int id in widget.movie.genreIds) {
-      String genreName = genre.genreMap[id];
-      genreWidgets.add(
-        Text(
-          genreName.toUpperCase(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-        ),
-      );
-      print('Added');
-    }
   }
 
   Widget _buildCasts(List<Cast> castList) {
@@ -294,45 +289,38 @@ class _DetailScreenState extends State<DetailScreen> {
                                   ),
                                 ),
                               ),
-//                            Padding(
-//                              padding:
-//                                  EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
-////                              child: Container(
-////                                width: double.infinity,
-////                                height: 500.0,
-////                                padding: EdgeInsets.all(20.0),
-////                                decoration: BoxDecoration(
-////                                    color: Colors.white,
-////                                    borderRadius: BorderRadius.circular(20.0)),
-//////                                child: ListView.builder(
-//////                                  scrollDirection: Axis.horizontal,
-//////                                  itemCount: widget.movie.genreIds.length,
-//////                                  itemBuilder:
-//////                                      (BuildContext context, int index) {
-//////                                    String genreName = genre
-//////                                        .genreMap[widget.movie.genreIds[index]];
-//////                                    print(genreName.toUpperCase());
-//////                                    return Container(
-//////                                      padding: EdgeInsets.symmetric(
-//////                                          horizontal: 20.0, vertical: 10.0),
-//////                                      decoration: BoxDecoration(
-//////                                          color: Theme.of(context)
-//////                                              .primaryColorDark,
-//////                                          borderRadius:
-//////                                              BorderRadius.circular(20.0)),
-//////                                      child: Text(
-//////                                        genreName.toUpperCase(),
-//////                                        style: TextStyle(
-//////                                          color: Colors.white,
-//////                                          fontSize: 16.0,
-//////                                        ),
-//////                                      ),
-//////                                    );
-//////                                  },
-//////                                ),
-////                                child: Column(children: genreWidgets),
-////                              ),
-//                            ),
+                              Padding(
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+                                child: Container(
+                                  padding: EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Center(
+                                        child: Text(
+                                          'WHAT ARE THE GENRES?',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.2,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10.0),
+                                      Wrap(
+                                        alignment: WrapAlignment.center,
+                                        children: _buildGenreList(),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
                               Padding(
                                 padding:
                                     EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
