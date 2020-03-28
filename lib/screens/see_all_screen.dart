@@ -10,14 +10,14 @@ class SeeAllScreen extends StatefulWidget {
 }
 
 class _SeeAllScreenState extends State<SeeAllScreen> {
-  Future<MovieResponse> future;
+  Future<MovieResponse> _future;
   MovieRepository _movieRepository;
 
   @override
   void initState() {
     super.initState();
     _movieRepository = MovieRepository();
-    future = _movieRepository.fetchPopularMovies(1);
+    _future = _movieRepository.fetchPopularMovies(1);
   }
 
   @override
@@ -55,7 +55,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                 ),
               ),
               FutureBuilder<MovieResponse>(
-                future: future,
+                future: _future,
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:

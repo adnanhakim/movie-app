@@ -15,6 +15,8 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  Future<List<Cast>> _future;
+  MovieRepository _movieRepository;
   Genre genre = Genre();
 
   @override
@@ -22,7 +24,8 @@ class _DetailScreenState extends State<DetailScreen> {
     super.initState();
     genre = Genre();
     _buildGenreObjects();
-    print(genreWidgets.length);
+    _movieRepository = MovieRepository();
+    _future = _movieRepository.fetchMovieCastList(widget.movie.id);
   }
 
 //  Widget _buildGenres(List<int> genres) {
@@ -364,8 +367,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               ),
                             ),
                             FutureBuilder<List<Cast>>(
-                              future: MovieRepository()
-                                  .fetchMovieCastList(widget.movie.id),
+                              future: _future,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   switch (snapshot.connectionState) {

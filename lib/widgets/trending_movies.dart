@@ -12,9 +12,14 @@ class TrendingMovies extends StatefulWidget {
 }
 
 class _TrendingMoviesState extends State<TrendingMovies> {
+  Future<MovieResponse> _future;
+  MovieRepository _movieRepository;
+
   @override
   void initState() {
     super.initState();
+    _movieRepository = MovieRepository();
+    _future = _movieRepository.fetchPopularMovies(1);
   }
 
   Widget _buildStarsWidget(dynamic rating) {
@@ -236,7 +241,7 @@ class _TrendingMoviesState extends State<TrendingMovies> {
             ),
           ),
           FutureBuilder<MovieResponse>(
-            future: MovieRepository().fetchPopularMovies(1),
+            future: _future,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 switch (snapshot.connectionState) {
