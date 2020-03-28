@@ -17,16 +17,16 @@ class MovieBloc {
   Stream<ApiResponse<List<Movie>>> get movieListStream =>
       _movieListController.stream;
 
-  MovieBloc() {
+  MovieBloc(int page) {
     _movieListController = StreamController<ApiResponse<List<Movie>>>();
     _movieRepository = MovieRepository();
-    fetchMovieList();
+    fetchMovieList(page);
   }
 
-  fetchMovieList() async {
-    movieListSink.add(ApiResponse.loading('Fetching Trending Movies'));
+  fetchMovieList(int page) async {
+    movieListSink.add(ApiResponse.loading('Fetching Popular Movies'));
     try {
-      List<Movie> movies = await _movieRepository.fetchTrendingMovies();
+      List<Movie> movies = await _movieRepository.fetchPopularMovies(page);
       movieListSink.add(ApiResponse.completed(movies));
     } catch (e) {
       movieListSink.add(ApiResponse.error(e.toString()));

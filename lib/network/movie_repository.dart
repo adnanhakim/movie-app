@@ -8,9 +8,21 @@ class MovieRepository {
 
   ApiBaseHelper _helper = ApiBaseHelper();
 
-  Future<List<Movie>> fetchTrendingMovies() async {
-    final response = await _helper.get("trending/movie/day?api_key=$_apiKey");
+//  Future<List<Movie>> fetchTrendingMovies() async {
+//    final response = await _helper.get("trending/movie/day?api_key=$_apiKey");
+//    return MovieResponse.fromJson(response).results;
+//  }
+
+  Future<List<Movie>> fetchPopularMovies(int page) async {
+    final response = await _helper
+        .get("movie/popular?api_key=$_apiKey&language=en-US&page=$page");
     return MovieResponse.fromJson(response).results;
+  }
+
+  Future<MovieResponse> fetchPopularMovieList(int page) async {
+    final response = await _helper
+        .get("movie/popular?api_key=$_apiKey&language=en-US&page=$page");
+    return MovieResponse.fromJson(response);
   }
 
   Future<List<Cast>> fetchMovieCastList(int _movieId) async {

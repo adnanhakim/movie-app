@@ -4,6 +4,7 @@ import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/api_response.dart';
 import 'package:MovieApp/network/movie_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DetailScreen extends StatefulWidget {
   final Movie movie;
@@ -103,6 +104,7 @@ class _DetailScreenState extends State<DetailScreen> {
           width: double.infinity,
           height: 130.0,
           child: ListView.builder(
+            physics: BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             itemCount: 10,
             itemBuilder: (BuildContext context, int index) {
@@ -160,6 +162,23 @@ class _DetailScreenState extends State<DetailScreen> {
                   image: NetworkImage(
                       'https://image.tmdb.org/t/p/w342${widget.movie.posterPath}'),
                   fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        FontAwesomeIcons.arrowLeft,
+                        color: Colors.white,
+                        size: 25.0,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -368,7 +387,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 }
                                 return Container();
                               },
-                            )
+                            ),
                           ],
                         ),
                       );

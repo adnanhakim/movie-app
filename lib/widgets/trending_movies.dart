@@ -2,6 +2,7 @@ import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/api_response.dart';
 import 'package:MovieApp/network/movie_bloc.dart';
 import 'package:MovieApp/screens/detail_screen.dart';
+import 'package:MovieApp/screens/see_all_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,7 +18,7 @@ class _TrendingMoviesState extends State<TrendingMovies> {
   @override
   void initState() {
     super.initState();
-    _bloc = MovieBloc();
+    _bloc = MovieBloc(1);
   }
 
   Widget _buildStarsWidget(dynamic rating) {
@@ -104,6 +105,7 @@ class _TrendingMoviesState extends State<TrendingMovies> {
       width: double.infinity,
       height: 500.0,
       child: ListView.builder(
+        physics: BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: movies.length,
         itemBuilder: (BuildContext buildContext, int index) {
@@ -218,12 +220,20 @@ class _TrendingMoviesState extends State<TrendingMovies> {
                     ),
                   ],
                 ),
-                Text(
-                  'See All',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColorDark,
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SeeAllScreen(),
+                    ),
+                  ),
+                  child: Text(
+                    'See All',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
                   ),
                 ),
               ],
@@ -249,7 +259,7 @@ class _TrendingMoviesState extends State<TrendingMovies> {
               }
               return Container();
             },
-          )
+          ),
         ],
       ),
     );
