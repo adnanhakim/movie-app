@@ -1,8 +1,11 @@
 import 'package:MovieApp/models/genre_model.dart';
+import 'package:MovieApp/models/language_model.dart';
 import 'package:MovieApp/models/movie_cast_response.dart';
+import 'package:MovieApp/models/movie_detail_response.dart';
 import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/movie_repository.dart';
 import 'package:MovieApp/utils/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -16,7 +19,8 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  Future<List<Cast>> _future;
+  Future<List<Cast>> _futureCast;
+  Future<MovieDetailResponse> _futureDetails;
   MovieRepository _movieRepository;
   Genre genre = Genre();
 
@@ -25,7 +29,26 @@ class _DetailScreenState extends State<DetailScreen> {
     super.initState();
     genre = Genre();
     _movieRepository = MovieRepository();
-    _future = _movieRepository.fetchMovieCastList(widget.movie.id);
+    _futureCast = _movieRepository.fetchMovieCastList(widget.movie.id);
+    _futureDetails = _movieRepository.fetchMovieDetails(widget.movie.id);
+  }
+
+  Widget _buildTagline(String tagline) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+      child: Center(
+        child: Text(
+          tagline.toUpperCase(),
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 
   String _getRecommendation(dynamic rating) {
@@ -122,6 +145,101 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  String _formatMoney(int no) {
+    String money = '';
+    if (no >= 1000000000) {
+      money = '${(no / 1000000000).toStringAsFixed(2)}b';
+    } else if (no >= 1000000) {
+      money = '${(no / 1000000).toStringAsFixed(2)}m';
+    } else if (no >= 1000) {
+      money = '${(no / 1000).toStringAsFixed(2)}k';
+    } else if (no > 0) {
+      money = no.toString();
+    } else {
+      return 'No data';
+    }
+    return money;
+  }
+
+  String _formatTime(int duration) {
+    int hour = duration ~/ 60;
+    int minutes = duration % 60;
+    return '${hour}h ${minutes}m';
+  }
+
+  Widget _buildStatsWidget(String header, dynamic value) {
+    double width = MediaQuery.of(context).size.width * 0.42;
+
+    String _value = '';
+    if (header == Constants.BUDGET || header == Constants.REVENUE) {
+      _value = _formatMoney(value);
+    } else if (header == Constants.LANGUAGE) {
+      Language language = Language();
+      if (language.languageMap.containsKey(value.toString().toLowerCase())) {
+        _value = language.languageMap[value.toString().toLowerCase()];
+      } else {
+        _value = value.toString().toUpperCase();
+      }
+    } else if (header == Constants.RUNTIME) {
+      _value = _formatTime(value);
+    }
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0.0, 0.0),
+            blurRadius: 6.0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            header,
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+          Text(
+            _value,
+            style: TextStyle(
+              color: Theme.of(context).primaryColorDark,
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStats(MovieDetailResponse details) {
+    return Container(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceEvenly,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        children: <Widget>[
+          _buildStatsWidget(Constants.LANGUAGE, details.originalLanguage),
+          _buildStatsWidget(Constants.RUNTIME, details.runtime),
+          _buildStatsWidget(Constants.BUDGET, details.budget),
+          _buildStatsWidget(Constants.REVENUE, details.revenue),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,6 +304,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                         ),
                         child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
                           controller: controller,
                           child: Column(
                             children: <Widget>[
@@ -205,15 +324,55 @@ class _DetailScreenState extends State<DetailScreen> {
                                   ),
                                 ),
                               ),
+                              FutureBuilder<MovieDetailResponse>(
+                                future: _futureDetails,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                      case ConnectionState.active:
+                                        return Container(
+                                          height: 100.0,
+                                          width: double.infinity,
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      case ConnectionState.done:
+                                        String tagline = snapshot.data.tagline;
+                                        if (tagline != null && tagline != '')
+                                          return _buildTagline(
+                                              snapshot.data.tagline);
+                                        else
+                                          return SizedBox.shrink();
+                                    }
+                                  } else if (snapshot.hasError) {
+                                    return Container(
+                                      height: 100.0,
+                                      width: double.infinity,
+                                      child: Text(snapshot.error.toString()),
+                                    );
+                                  }
+                                  return Container();
+                                },
+                              ),
                               Padding(
                                 padding:
                                     EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
                                 child: Container(
                                   padding: EdgeInsets.all(20.0),
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        offset: Offset(0.0, 0.0),
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       Center(
@@ -249,9 +408,16 @@ class _DetailScreenState extends State<DetailScreen> {
                                 child: Container(
                                   padding: EdgeInsets.all(20.0),
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        offset: Offset(0.0, 0.0),
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       Center(
@@ -285,9 +451,16 @@ class _DetailScreenState extends State<DetailScreen> {
                                 child: Container(
                                   padding: EdgeInsets.all(20.0),
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        offset: Offset(0.0, 0.0),
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       Center(
@@ -317,9 +490,16 @@ class _DetailScreenState extends State<DetailScreen> {
                                 child: Container(
                                   padding: EdgeInsets.all(20.0),
                                   decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        offset: Offset(0.0, 0.0),
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       Center(
@@ -367,7 +547,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     ),
                                   ),
                                   FutureBuilder<List<Cast>>(
-                                    future: _future,
+                                    future: _futureCast,
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         switch (snapshot.connectionState) {
@@ -388,6 +568,56 @@ class _DetailScreenState extends State<DetailScreen> {
                                       } else if (snapshot.hasError) {
                                         return Container(
                                           height: 130.0,
+                                          width: double.infinity,
+                                          child:
+                                              Text(snapshot.error.toString()),
+                                        );
+                                      }
+                                      return Container();
+                                    },
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                        20.0, 5.0, 20.0, 10.0),
+                                    child: Center(
+                                      child: Text(
+                                        'FOR THE STAT FREAKS',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  FutureBuilder<MovieDetailResponse>(
+                                    future: _futureDetails,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        switch (snapshot.connectionState) {
+                                          case ConnectionState.none:
+                                          case ConnectionState.waiting:
+                                          case ConnectionState.active:
+                                            return Container(
+                                              height: 100.0,
+                                              width: double.infinity,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                            );
+                                          case ConnectionState.done:
+                                            return _buildStats(snapshot.data);
+                                        }
+                                      } else if (snapshot.hasError) {
+                                        return Container(
+                                          height: 100.0,
                                           width: double.infinity,
                                           child:
                                               Text(snapshot.error.toString()),

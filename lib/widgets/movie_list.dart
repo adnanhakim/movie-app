@@ -1,5 +1,5 @@
 import 'package:MovieApp/models/movie_response.dart';
-import 'package:MovieApp/screens/detail_screen.dart';
+import 'package:MovieApp/screens/movie_detail_screen.dart';
 import 'package:MovieApp/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

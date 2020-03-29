@@ -1,6 +1,6 @@
 import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/movie_repository.dart';
-import 'package:MovieApp/screens/detail_screen.dart';
+import 'package:MovieApp/screens/movie_detail_screen.dart';
 import 'package:MovieApp/screens/see_all_screen.dart';
 import 'package:MovieApp/utils/constants.dart';
 import 'package:flutter/cupertino.dart';

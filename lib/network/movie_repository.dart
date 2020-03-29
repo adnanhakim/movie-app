@@ -1,4 +1,5 @@
 import 'package:MovieApp/models/movie_cast_response.dart';
+import 'package:MovieApp/models/movie_detail_response.dart';
 import 'package:MovieApp/models/movie_response.dart';
 
 import 'api_base_helper.dart';
@@ -8,14 +9,16 @@ class MovieRepository {
 
   ApiBaseHelper _helper = ApiBaseHelper();
 
-//  Future<List<Movie>> fetchTrendingMovies() async {
-//    final response = await _helper.get("trending/movie/day?api_key=$_apiKey");
-//    return MovieResponse.fromJson(response).results;
-//  }
   Future<MovieResponse> fetchPopularMovies(int page) async {
     final response = await _helper
         .get('movie/popular?api_key=$_apiKey&language=en-US&page=$page');
     return MovieResponse.fromJson(response);
+  }
+
+  Future<MovieDetailResponse> fetchMovieDetails(int movieId) async {
+    final response =
+        await _helper.get('movie/$movieId?api_key=$_apiKey&language=en-US');
+    return MovieDetailResponse.fromJson(response);
   }
 
   Future<List<Cast>> fetchMovieCastList(int movieId) async {
