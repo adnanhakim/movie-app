@@ -227,7 +227,7 @@ class _TrendingMoviesState extends State<TrendingMovies> {
                     ),
                     SizedBox(width: 10.0),
                     Text(
-                      'Hot right now',
+                      'Hot movies right now',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,

@@ -206,7 +206,7 @@ class _DetailScreenState extends State<DetailScreen> {
             header,
             style: TextStyle(
               color: Colors.black54,
-              fontSize: 14.0,
+              fontSize: 12.0,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
@@ -215,7 +215,7 @@ class _DetailScreenState extends State<DetailScreen> {
             _value,
             style: TextStyle(
               color: Theme.of(context).primaryColorDark,
-              fontSize: 24.0,
+              fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),

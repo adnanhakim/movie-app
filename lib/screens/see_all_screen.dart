@@ -44,7 +44,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                     ),
                     SizedBox(width: 10.0),
                     Text(
-                      'Hot right now',
+                      'Hot movies',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
