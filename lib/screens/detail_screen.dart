@@ -2,6 +2,7 @@ import 'package:MovieApp/models/genre_model.dart';
 import 'package:MovieApp/models/movie_cast_response.dart';
 import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/movie_repository.dart';
+import 'package:MovieApp/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -25,6 +26,29 @@ class _DetailScreenState extends State<DetailScreen> {
     genre = Genre();
     _movieRepository = MovieRepository();
     _future = _movieRepository.fetchMovieCastList(widget.movie.id);
+  }
+
+  String _getRecommendation(dynamic rating) {
+    if (rating >= 8.5)
+      return 'A definite must watch!';
+    else if (rating >= 8)
+      return 'Highly recommended';
+    else if (rating >= 7.5)
+      return 'Recommended';
+    else if (rating >= 6)
+      return 'Above average';
+    else if (rating >= 5)
+      return 'Watchable';
+    else if (rating >= 4)
+      return 'Watchable with breaks';
+    else if (rating >= 3)
+      return 'Not recommended';
+    else if (rating >= 2)
+      return 'Alcohol required';
+    else if (rating >= 1)
+      return 'Only for high spirited souls';
+    else
+      return 'A complete disaster';
   }
 
   Widget _buildGenre(String genreName) {
@@ -54,86 +78,47 @@ class _DetailScreenState extends State<DetailScreen> {
     return widgets;
   }
 
-  String _getRecommendation(dynamic rating) {
-    if (rating >= 8.5)
-      return 'A definite must watch!';
-    else if (rating >= 8)
-      return 'Highly recommended';
-    else if (rating >= 7.5)
-      return 'Recommended';
-    else if (rating >= 6)
-      return 'Above average';
-    else if (rating >= 5)
-      return 'Watchable';
-    else if (rating >= 4)
-      return 'Watchable with breaks';
-    else if (rating >= 3)
-      return 'Not recommended';
-    else if (rating >= 2)
-      return 'Alcohol required';
-    else if (rating >= 1)
-      return 'Only for high spirited souls';
-    else
-      return 'A complete disaster';
-  }
-
   Widget _buildCasts(List<Cast> castList) {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
-          child: Center(
-            child: Text(
-              'WHO ARE THE MAIN ACTORS?',
-              style: TextStyle(
-                color: Theme.of(context).primaryColorDark,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
+    return Container(
+      width: double.infinity,
+      height: 130.0,
+      child: ListView.builder(
+        physics: BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        itemCount: castList.length > 10 ? 10 : castList.length,
+        itemBuilder: (BuildContext context, int index) {
+          Cast cast = castList[index];
+          String firstName = cast.name.split(' ')[0];
+          return Center(
+            child: Container(
+              width: 100.0,
+              height: 110.0,
+              padding: EdgeInsets.only(left: 20.0),
+              child: Column(
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 40.0,
+                    backgroundImage: cast.profilePath != null
+                        ? NetworkImage(
+                            Constants.IMAGE_BASE_URL + cast.profilePath)
+                        : NetworkImage(Constants.PROFILE_IMAGE_NOT_FOUND),
+                  ),
+                  SizedBox(height: 5.0),
+                  Text(
+                    firstName,
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 16.0,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
               ),
             ),
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          height: 130.0,
-          child: ListView.builder(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            itemCount: 10,
-            itemBuilder: (BuildContext context, int index) {
-              Cast cast = castList[index];
-              String firstName = cast.name.split(' ')[0];
-              return Center(
-                child: Container(
-                  width: 100.0,
-                  height: 110.0,
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Column(
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 40.0,
-                        backgroundImage: NetworkImage(
-                            'https://image.tmdb.org/t/p/w342${cast.profilePath}'),
-                      ),
-                      SizedBox(height: 5.0),
-                      Text(
-                        firstName,
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 16.0,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+          );
+        },
+      ),
     );
   }
 
@@ -147,17 +132,22 @@ class _DetailScreenState extends State<DetailScreen> {
           color: Colors.red,
           child: Stack(
             children: <Widget>[
-              Hero(
-                tag:
-                    'https://image.tmdb.org/t/p/w342${widget.movie.posterPath}',
-                child: Image(
-                  width: double.infinity,
-                  height: double.infinity,
-                  image: NetworkImage(
-                      'https://image.tmdb.org/t/p/w342${widget.movie.posterPath}'),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              widget.movie.posterPath != null
+                  ? Hero(
+                      tag: widget.movie.posterPath,
+                      child: Image(
+                        width: double.infinity,
+                        height: double.infinity,
+                        image: NetworkImage(
+                            Constants.IMAGE_BASE_URL + widget.movie.posterPath),
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Container(
+                      height: double.infinity,
+                      width: double.infinity,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Row(
@@ -358,23 +348,55 @@ class _DetailScreenState extends State<DetailScreen> {
                                   ),
                                 ),
                               ),
-                              FutureBuilder<List<Cast>>(
-                                future: _future,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    switch (snapshot.connectionState) {
-                                      case ConnectionState.none:
-                                      case ConnectionState.waiting:
-                                      case ConnectionState.active:
-                                        return CircularProgressIndicator();
-                                      case ConnectionState.done:
-                                        return _buildCasts(snapshot.data);
-                                    }
-                                  } else if (snapshot.hasError) {
-                                    return Text(snapshot.error.toString());
-                                  }
-                                  return Container();
-                                },
+                              Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                        20.0, 5.0, 20.0, 10.0),
+                                    child: Center(
+                                      child: Text(
+                                        'WHO ARE THE MAIN ACTORS?',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  FutureBuilder<List<Cast>>(
+                                    future: _future,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        switch (snapshot.connectionState) {
+                                          case ConnectionState.none:
+                                          case ConnectionState.waiting:
+                                          case ConnectionState.active:
+                                            return Container(
+                                              height: 130.0,
+                                              width: double.infinity,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                            );
+                                          case ConnectionState.done:
+                                            return _buildCasts(snapshot.data);
+                                        }
+                                      } else if (snapshot.hasError) {
+                                        return Container(
+                                          height: 130.0,
+                                          width: double.infinity,
+                                          child:
+                                              Text(snapshot.error.toString()),
+                                        );
+                                      }
+                                      return Container();
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),

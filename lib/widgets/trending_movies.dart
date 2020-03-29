@@ -2,6 +2,7 @@ import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/movie_repository.dart';
 import 'package:MovieApp/screens/detail_screen.dart';
 import 'package:MovieApp/screens/see_all_screen.dart';
+import 'package:MovieApp/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -124,24 +125,38 @@ class _TrendingMoviesState extends State<TrendingMovies> {
               alignment: Alignment.center,
               child: Stack(
                 children: <Widget>[
-                  Hero(
-                    tag: 'https://image.tmdb.org/t/p/w342${movie.posterPath}',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(30.0),
-                        bottomLeft: Radius.circular(30.0),
-                        bottomRight: Radius.circular(30.0),
-                      ),
-                      child: Image(
-                        height: double.infinity,
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        image: NetworkImage(
-                            'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  movie.posterPath != null
+                      ? Hero(
+                          tag: movie.posterPath,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              topRight: Radius.circular(30.0),
+                              bottomLeft: Radius.circular(30.0),
+                              bottomRight: Radius.circular(30.0),
+                            ),
+                            child: Image(
+                              height: double.infinity,
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              image: NetworkImage(
+                                  Constants.IMAGE_BASE_URL + movie.posterPath),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColorDark,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              topRight: Radius.circular(30.0),
+                              bottomLeft: Radius.circular(30.0),
+                              bottomRight: Radius.circular(30.0),
+                            ),
+                          ),
+                        ),
                   Positioned(
                     bottom: 0.0,
                     right: 0.0,

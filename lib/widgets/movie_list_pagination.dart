@@ -1,19 +1,20 @@
 import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/movie_repository.dart';
 import 'package:MovieApp/screens/detail_screen.dart';
+import 'package:MovieApp/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class MovieList extends StatefulWidget {
+class MovieListPagination extends StatefulWidget {
   final MovieResponse movieResponse;
 
-  const MovieList({this.movieResponse});
+  const MovieListPagination({this.movieResponse});
 
   @override
-  _MovieListState createState() => _MovieListState();
+  _MovieListPaginationState createState() => _MovieListPaginationState();
 }
 
-class _MovieListState extends State<MovieList> {
+class _MovieListPaginationState extends State<MovieListPagination> {
   ScrollController _scrollController = ScrollController();
   List<Movie> movies;
   int currentPage = 1;
@@ -42,11 +43,6 @@ class _MovieListState extends State<MovieList> {
     super.initState();
     movies = widget.movieResponse.results;
     _movieRepository = MovieRepository();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Widget _buildStarsWidget(dynamic rating) {
@@ -157,24 +153,37 @@ class _MovieListState extends State<MovieList> {
                   height: 300.0,
                   child: Stack(
                     children: <Widget>[
-                      Hero(
-                        tag:
-                            'https://image.tmdb.org/t/p/w342${movie.posterPath}',
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                            bottomLeft: Radius.circular(20.0),
-                            bottomRight: Radius.circular(20.0),
-                          ),
-                          child: Image(
-                            width: double.infinity,
-                            image: NetworkImage(
-                                'https://image.tmdb.org/t/p/w342${movie.posterPath}'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                      movie.posterPath != null
+                          ? Hero(
+                              tag: movie.posterPath,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0),
+                                  bottomLeft: Radius.circular(20.0),
+                                  bottomRight: Radius.circular(20.0),
+                                ),
+                                child: Image(
+                                  width: double.infinity,
+                                  image: NetworkImage(Constants.IMAGE_BASE_URL +
+                                      movie.posterPath),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColorDark,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0),
+                                  bottomLeft: Radius.circular(20.0),
+                                  bottomRight: Radius.circular(20.0),
+                                ),
+                              ),
+                            ),
                       Positioned(
                         bottom: 0.0,
                         right: 0.0,

@@ -1,6 +1,6 @@
 import 'package:MovieApp/models/movie_response.dart';
 import 'package:MovieApp/network/movie_repository.dart';
-import 'package:MovieApp/widgets/see_all_movie_list.dart';
+import 'package:MovieApp/widgets/movie_list_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -72,7 +72,8 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                       if (snapshot.hasError) {
                         return Text('error');
                       } else {
-                        return MovieList(movieResponse: snapshot.data);
+                        return MovieListPagination(
+                            movieResponse: snapshot.data);
                       }
                       break;
                   }

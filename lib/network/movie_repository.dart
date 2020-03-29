@@ -14,13 +14,19 @@ class MovieRepository {
 //  }
   Future<MovieResponse> fetchPopularMovies(int page) async {
     final response = await _helper
-        .get("movie/popular?api_key=$_apiKey&language=en-US&page=$page");
+        .get('movie/popular?api_key=$_apiKey&language=en-US&page=$page');
     return MovieResponse.fromJson(response);
   }
 
-  Future<List<Cast>> fetchMovieCastList(int _movieId) async {
+  Future<List<Cast>> fetchMovieCastList(int movieId) async {
     final response =
-        await _helper.get("movie/$_movieId/credits?api_key=$_apiKey");
+        await _helper.get('movie/$movieId/credits?api_key=$_apiKey');
     return MovieCastResponse.fromJson(response).results;
+  }
+
+  Future<MovieResponse> searchMovies(String searchText) async {
+    final response = await _helper.get(
+        'search/movie?api_key=$_apiKey&language=en-US&query=$searchText&page=1');
+    return MovieResponse.fromJson(response);
   }
 }
