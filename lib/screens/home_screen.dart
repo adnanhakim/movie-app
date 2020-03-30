@@ -1,5 +1,6 @@
 import 'package:MovieApp/screens/search_movie_screen.dart';
-import 'package:MovieApp/widgets/trending_movies.dart';
+import 'package:MovieApp/widgets/popular_movies.dart';
+import 'package:MovieApp/widgets/popular_series.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -108,7 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                TrendingMovies(),
+                PopularMovies(),
+                SizedBox(height: 20.0),
+                PopularSeries(),
+                SizedBox(height: 10.0),
               ],
             ),
           ),

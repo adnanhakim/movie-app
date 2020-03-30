@@ -145,7 +145,7 @@ class _MovieListPaginationState extends State<MovieListPagination> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DetailScreen(movie: movie),
+                    builder: (_) => MovieDetailScreen(movie: movie),
                   ),
                 ),
                 child: Container(

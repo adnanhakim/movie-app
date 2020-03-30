@@ -1,10 +1,10 @@
-class MovieCastResponse {
+class CastResponse {
   int id;
   List<Cast> results;
 
-  MovieCastResponse({this.id, this.results});
+  CastResponse({this.id, this.results});
 
-  MovieCastResponse.fromJson(Map<String, dynamic> json) {
+  CastResponse.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     if (json['cast'] != null) {
       results = new List<Cast>();

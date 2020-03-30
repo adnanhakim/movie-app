@@ -1,11 +1,12 @@
-import 'package:MovieApp/models/movie_cast_response.dart';
+import 'package:MovieApp/models/cast_response.dart';
 import 'package:MovieApp/models/movie_detail_response.dart';
 import 'package:MovieApp/models/movie_response.dart';
+import 'package:MovieApp/utils/constants.dart';
 
 import 'api_base_helper.dart';
 
 class MovieRepository {
-  final String _apiKey = "7f1c5b6bcdc0417095c1df13c485f647";
+  final String _apiKey = Constants.API_KEY;
 
   ApiBaseHelper _helper = ApiBaseHelper();
 
@@ -22,9 +23,9 @@ class MovieRepository {
   }
 
   Future<List<Cast>> fetchMovieCastList(int movieId) async {
-    final response =
-        await _helper.get('movie/$movieId/credits?api_key=$_apiKey');
-    return MovieCastResponse.fromJson(response).results;
+    final response = await _helper
+        .get('movie/$movieId/credits?api_key=$_apiKey&language=en-US');
+    return CastResponse.fromJson(response).results;
   }
 
   Future<MovieResponse> searchMovies(String searchText) async {

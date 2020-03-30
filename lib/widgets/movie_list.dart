@@ -119,7 +119,7 @@ class _MovieListState extends State<MovieList> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => DetailScreen(movie: movie),
+                  builder: (_) => MovieDetailScreen(movie: movie),
                 ),
               ),
               child: Container(

@@ -7,12 +7,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class TrendingMovies extends StatefulWidget {
+class PopularMovies extends StatefulWidget {
   @override
-  _TrendingMoviesState createState() => _TrendingMoviesState();
+  _PopularMoviesState createState() => _PopularMoviesState();
 }
 
-class _TrendingMoviesState extends State<TrendingMovies> {
+class _PopularMoviesState extends State<PopularMovies> {
   Future<MovieResponse> _future;
   MovieRepository _movieRepository;
 
@@ -116,7 +116,7 @@ class _TrendingMoviesState extends State<TrendingMovies> {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => DetailScreen(movie: movie),
+                builder: (_) => MovieDetailScreen(movie: movie),
               ),
             ),
             child: Container(

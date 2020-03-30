@@ -1,54 +1,35 @@
 import 'package:MovieApp/models/cast_response.dart';
 import 'package:MovieApp/models/genre_model.dart';
 import 'package:MovieApp/models/language_model.dart';
-import 'package:MovieApp/models/movie_detail_response.dart';
-import 'package:MovieApp/models/movie_response.dart';
-import 'package:MovieApp/network/movie_repository.dart';
+import 'package:MovieApp/models/tv_detail_response.dart';
+import 'package:MovieApp/models/tv_response.dart';
+import 'package:MovieApp/network/tv_repository.dart';
 import 'package:MovieApp/utils/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class MovieDetailScreen extends StatefulWidget {
-  final Movie movie;
+class TvDetailScreen extends StatefulWidget {
+  final TVSeries tvSeries;
 
-  MovieDetailScreen({this.movie});
+  TvDetailScreen({this.tvSeries});
 
   @override
-  _MovieDetailScreenState createState() => _MovieDetailScreenState();
+  _TvDetailScreenState createState() => _TvDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen> {
+class _TvDetailScreenState extends State<TvDetailScreen> {
   Future<List<Cast>> _futureCast;
-  Future<MovieDetailResponse> _futureDetails;
-  MovieRepository _movieRepository;
+  Future<TvDetailResponse> _futureDetails;
+  TvRepository _tvRepository;
   Genre genre = Genre();
 
   @override
   void initState() {
     super.initState();
     genre = Genre();
-    _movieRepository = MovieRepository();
-    _futureCast = _movieRepository.fetchMovieCastList(widget.movie.id);
-    _futureDetails = _movieRepository.fetchMovieDetails(widget.movie.id);
-  }
-
-  Widget _buildTagline(String tagline) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
-      child: Center(
-        child: Text(
-          tagline.toUpperCase(),
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+    _tvRepository = TvRepository();
+    _futureCast = _tvRepository.fetchSeriesCastList(widget.tvSeries.id);
+    _futureDetails = _tvRepository.fetchSeriesDetails(widget.tvSeries.id);
   }
 
   String _getRecommendation(dynamic rating) {
@@ -94,7 +75,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   List<Widget> _buildGenreList() {
     List<Widget> widgets = List<Widget>();
-    for (int genreId in widget.movie.genreIds) {
+    for (int genreId in widget.tvSeries.genreIds) {
       String genreName = genre.genreMap[genreId];
       widgets.add(_buildGenre(genreName));
     }
@@ -145,34 +126,31 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  String _formatMoney(int no) {
-    String money = '';
-    if (no >= 1000000000) {
-      money = '${(no / 1000000000).toStringAsFixed(2)}b';
-    } else if (no >= 1000000) {
-      money = '${(no / 1000000).toStringAsFixed(2)}m';
-    } else if (no >= 1000) {
-      money = '${(no / 1000).toStringAsFixed(2)}k';
-    } else if (no > 0) {
-      money = no.toString();
+  String _formatNumber(int no) {
+    if (no < 10) {
+      return '0$no';
     } else {
-      return 'No data';
+      return no.toString();
     }
-    return money;
   }
 
   String _formatTime(int duration) {
     int hour = duration ~/ 60;
     int minutes = duration % 60;
-    return '${hour}h ${minutes}m';
+    if (hour > 0) {
+      return '${hour}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
   }
 
   Widget _buildStatsWidget(String header, dynamic value) {
     double width = MediaQuery.of(context).size.width * 0.42;
 
     String _value = '';
-    if (header == Constants.BUDGET || header == Constants.REVENUE) {
-      _value = _formatMoney(value);
+    if (header == Constants.NO_OF_SEASONS ||
+        header == Constants.NO_OF_EPISODES) {
+      _value = _formatNumber(value);
     } else if (header == Constants.LANGUAGE) {
       Language language = Language();
       if (language.languageMap.containsKey(value.toString().toLowerCase())) {
@@ -224,7 +202,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  Widget _buildStats(MovieDetailResponse details) {
+  Widget _buildStats(TvDetailResponse details) {
     return Container(
       width: double.infinity,
       child: Wrap(
@@ -232,9 +210,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         crossAxisAlignment: WrapCrossAlignment.start,
         children: <Widget>[
           _buildStatsWidget(Constants.LANGUAGE, details.originalLanguage),
-          _buildStatsWidget(Constants.RUNTIME, details.runtime),
-          _buildStatsWidget(Constants.BUDGET, details.budget),
-          _buildStatsWidget(Constants.REVENUE, details.revenue),
+          _buildStatsWidget(Constants.RUNTIME, details.episodeRunTime[0]),
+          _buildStatsWidget(Constants.NO_OF_SEASONS, details.numberOfSeasons),
+          _buildStatsWidget(Constants.NO_OF_EPISODES, details.numberOfEpisodes),
         ],
       ),
     );
@@ -250,14 +228,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           color: Colors.red,
           child: Stack(
             children: <Widget>[
-              widget.movie.posterPath != null
+              widget.tvSeries.posterPath != null
                   ? Hero(
-                      tag: widget.movie.posterPath,
+                      tag: widget.tvSeries.posterPath,
                       child: Image(
                         width: double.infinity,
                         height: double.infinity,
-                        image: NetworkImage(
-                            Constants.IMAGE_BASE_URL + widget.movie.posterPath),
+                        image: NetworkImage(Constants.IMAGE_BASE_URL +
+                            widget.tvSeries.posterPath),
                         fit: BoxFit.cover,
                       ),
                     )
@@ -292,7 +270,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   ),
                   child: DraggableScrollableSheet(
                     builder: (context, controller) {
-                      dynamic voteAvg = widget.movie.voteAverage;
+                      dynamic voteAvg = widget.tvSeries.voteAverage;
                       String rating =
                           '${((voteAvg * 10).toInt()).toString()}% people recommend this movie';
                       return Container(
@@ -313,7 +291,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     vertical: 30.0, horizontal: 20.0),
                                 child: Center(
                                   child: Text(
-                                    widget.movie.title.toUpperCase(),
+                                    widget.tvSeries.name.toUpperCase(),
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 25.0,
@@ -323,39 +301,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
-                              ),
-                              FutureBuilder<MovieDetailResponse>(
-                                future: _futureDetails,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    switch (snapshot.connectionState) {
-                                      case ConnectionState.none:
-                                      case ConnectionState.waiting:
-                                      case ConnectionState.active:
-                                        return Container(
-                                          height: 100.0,
-                                          width: double.infinity,
-                                          child: Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        );
-                                      case ConnectionState.done:
-                                        String tagline = snapshot.data.tagline;
-                                        if (tagline != null && tagline != '')
-                                          return _buildTagline(
-                                              snapshot.data.tagline);
-                                        else
-                                          return SizedBox.shrink();
-                                    }
-                                  } else if (snapshot.hasError) {
-                                    return Container(
-                                      height: 100.0,
-                                      width: double.infinity,
-                                      child: Text(snapshot.error.toString()),
-                                    );
-                                  }
-                                  return Container();
-                                },
                               ),
                               Padding(
                                 padding:
@@ -390,7 +335,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                       SizedBox(height: 10.0),
                                       Text(
                                         _getRecommendation(
-                                            widget.movie.voteAverage),
+                                            widget.tvSeries.voteAverage),
                                         style: TextStyle(
                                           color: Colors.black54,
                                           fontWeight: FontWeight.bold,
@@ -422,7 +367,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     children: <Widget>[
                                       Center(
                                         child: Text(
-                                          'WHAT IS THIS MOVIE ABOUT?',
+                                          'WHAT IS THIS SERIES ABOUT?',
                                           style: TextStyle(
                                             color: Theme.of(context)
                                                 .primaryColorDark,
@@ -434,7 +379,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                       ),
                                       SizedBox(height: 10.0),
                                       Text(
-                                        widget.movie.overview,
+                                        widget.tvSeries.overview,
                                         style: TextStyle(
                                           color: Colors.black54,
                                           fontSize: 14.0,
@@ -596,7 +541,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                       ),
                                     ),
                                   ),
-                                  FutureBuilder<MovieDetailResponse>(
+                                  FutureBuilder<TvDetailResponse>(
                                     future: _futureDetails,
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
