@@ -64,7 +64,7 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
       ),
       padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: Text(
-        genreName,
+        genreName.toString(),
         style: TextStyle(
           color: Colors.white,
           fontSize: 16.0,
@@ -80,6 +80,74 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
       widgets.add(_buildGenre(genreName));
     }
     return widgets;
+  }
+
+  Widget _buildNetwork(Network network) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+      child: Container(
+          width: MediaQuery.of(context).size.width * 0.3,
+          child: Image(
+            width: MediaQuery.of(context).size.width * 0.5,
+            image: network.logoPath != null
+                ? NetworkImage(Constants.IMAGE_BASE_URL + network.logoPath)
+                : NetworkImage(Constants.PROFILE_IMAGE_NOT_FOUND),
+          )),
+    );
+  }
+
+  List<Widget> _buildNetworkList(List<Network> networks) {
+    List<Widget> widgets = List<Widget>();
+    for (Network network in networks) {
+      if (network.logoPath != null || network.logoPath != '') {
+        widgets.add(_buildNetwork(network));
+      }
+    }
+    return widgets;
+  }
+
+  Widget _buildNetworks(List<Network> networks) {
+    if (networks.length > 0 && networks[0].logoPath != null ||
+        networks[0].logoPath != '') {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0.0, 0.0),
+                blurRadius: 6.0,
+              ),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              Center(
+                child: Text(
+                  'WHERE CAN I WATCH IT?',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: _buildNetworkList(networks),
+              )
+            ],
+          ),
+        ),
+      );
+    } else
+      return SizedBox.shrink();
   }
 
   Widget _buildCasts(List<Cast> castList) {
@@ -472,6 +540,35 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
                                     ],
                                   ),
                                 ),
+                              ),
+                              FutureBuilder<TvDetailResponse>(
+                                future: _futureDetails,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                      case ConnectionState.active:
+                                        return Container(
+                                          height: 100.0,
+                                          width: double.infinity,
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      case ConnectionState.done:
+                                        return _buildNetworks(
+                                            snapshot.data.networks);
+                                    }
+                                  } else if (snapshot.hasError) {
+                                    return Container(
+                                      height: 100.0,
+                                      width: double.infinity,
+                                      child: Text(snapshot.error.toString()),
+                                    );
+                                  }
+                                  return Container();
+                                },
                               ),
                               Column(
                                 children: <Widget>[
