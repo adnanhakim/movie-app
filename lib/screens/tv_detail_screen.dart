@@ -277,10 +277,34 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
         alignment: WrapAlignment.spaceEvenly,
         crossAxisAlignment: WrapCrossAlignment.start,
         children: <Widget>[
-          _buildStatsWidget(Constants.LANGUAGE, details.originalLanguage),
-          _buildStatsWidget(Constants.RUNTIME, details.episodeRunTime[0]),
-          _buildStatsWidget(Constants.NO_OF_SEASONS, details.numberOfSeasons),
-          _buildStatsWidget(Constants.NO_OF_EPISODES, details.numberOfEpisodes),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 10.0),
+            child: Center(
+              child: Text(
+                'FOR THE STAT FREAKS',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColorDark,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+          ),
+          details.originalLanguage != ''
+              ? _buildStatsWidget(Constants.LANGUAGE, details.originalLanguage)
+              : SizedBox.shrink(),
+          details.episodeRunTime.length > 0
+              ? _buildStatsWidget(Constants.RUNTIME, details.episodeRunTime[0])
+              : SizedBox.shrink(),
+          details.numberOfSeasons != null
+              ? _buildStatsWidget(
+                  Constants.NO_OF_SEASONS, details.numberOfSeasons)
+              : SizedBox.shrink(),
+          details.numberOfEpisodes != null
+              ? _buildStatsWidget(
+                  Constants.NO_OF_EPISODES, details.numberOfEpisodes)
+              : SizedBox.shrink(),
         ],
       ),
     );
@@ -561,11 +585,8 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
                                             snapshot.data.networks);
                                     }
                                   } else if (snapshot.hasError) {
-                                    return Container(
-                                      height: 100.0,
-                                      width: double.infinity,
-                                      child: Text(snapshot.error.toString()),
-                                    );
+                                    print(snapshot.error.toString());
+                                    return SizedBox.shrink();
                                   }
                                   return Container();
                                 },
@@ -608,67 +629,38 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
                                             return _buildCasts(snapshot.data);
                                         }
                                       } else if (snapshot.hasError) {
-                                        return Container(
-                                          height: 130.0,
-                                          width: double.infinity,
-                                          child:
-                                              Text(snapshot.error.toString()),
-                                        );
+                                        print(snapshot.error.toString());
+                                        return SizedBox.shrink();
                                       }
                                       return Container();
                                     },
                                   ),
                                 ],
                               ),
-                              Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        20.0, 5.0, 20.0, 10.0),
-                                    child: Center(
-                                      child: Text(
-                                        'FOR THE STAT FREAKS',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .primaryColorDark,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  FutureBuilder<TvDetailResponse>(
-                                    future: _futureDetails,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.none:
-                                          case ConnectionState.waiting:
-                                          case ConnectionState.active:
-                                            return Container(
-                                              height: 100.0,
-                                              width: double.infinity,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
-                                          case ConnectionState.done:
-                                            return _buildStats(snapshot.data);
-                                        }
-                                      } else if (snapshot.hasError) {
+                              FutureBuilder<TvDetailResponse>(
+                                future: _futureDetails,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                      case ConnectionState.active:
                                         return Container(
                                           height: 100.0,
                                           width: double.infinity,
-                                          child:
-                                              Text(snapshot.error.toString()),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
                                         );
-                                      }
-                                      return Container();
-                                    },
-                                  ),
-                                ],
+                                      case ConnectionState.done:
+                                        return _buildStats(snapshot.data);
+                                    }
+                                  } else if (snapshot.hasError) {
+                                    print(snapshot.error.toString());
+                                    return SizedBox.shrink();
+                                  }
+                                  return Container();
+                                },
                               ),
                             ],
                           ),

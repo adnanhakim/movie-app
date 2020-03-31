@@ -234,22 +234,22 @@ class _PopularSeriesState extends State<PopularSeries> {
                     ),
                   ],
                 ),
-                GestureDetector(
-//                  onTap: () => Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                      builder: (_) => SeeAllScreen(),
+//                GestureDetector(
+////                  onTap: () => Navigator.push(
+////                    context,
+////                    MaterialPageRoute(
+////                      builder: (_) => SeeAllScreen(),
+////                    ),
+////                  ),
+//                  child: Text(
+//                    'See All',
+//                    style: TextStyle(
+//                      fontSize: 16.0,
+//                      fontWeight: FontWeight.bold,
+//                      color: Theme.of(context).primaryColorDark,
 //                    ),
 //                  ),
-                  child: Text(
-                    'See All',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
+//                ),
               ],
             ),
           ),

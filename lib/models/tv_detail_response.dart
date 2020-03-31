@@ -1,5 +1,5 @@
 class TvDetailResponse {
-  String backdropPath;
+  dynamic backdropPath;
   List<int> episodeRunTime;
   DateTime firstAirDate;
   String homepage;
@@ -13,12 +13,12 @@ class TvDetailResponse {
   List<Network> networks;
   int numberOfEpisodes;
   int numberOfSeasons;
-  List<dynamic> originCountry;
+  List<String> originCountry;
   String originalLanguage;
   String originalName;
   String overview;
   double popularity;
-  String posterPath;
+  dynamic posterPath;
   List<Network> productionCompanies;
   List<Season> seasons;
   String status;
@@ -73,7 +73,7 @@ class TvDetailResponse {
             json["networks"].map((x) => Network.fromJson(x))),
         numberOfEpisodes: json["number_of_episodes"],
         numberOfSeasons: json["number_of_seasons"],
-        originCountry: List<dynamic>.from(json["origin_country"].map((x) => x)),
+        originCountry: List<String>.from(json["origin_country"].map((x) => x)),
         originalLanguage: json["original_language"],
         originalName: json["original_name"],
         overview: json["overview"],
@@ -91,30 +91,30 @@ class TvDetailResponse {
 
   Map<String, dynamic> toJson() => {
         "backdrop_path": backdropPath,
-        "episode_run_time": List<dynamic>.from(episodeRunTime.map((x) => x)),
+        "episode_run_time": List<int>.from(episodeRunTime.map((x) => x)),
         "first_air_date":
             "${firstAirDate.year.toString().padLeft(4, '0')}-${firstAirDate.month.toString().padLeft(2, '0')}-${firstAirDate.day.toString().padLeft(2, '0')}",
         "homepage": homepage,
         "id": id,
         "in_production": inProduction,
-        "languages": List<dynamic>.from(languages.map((x) => x)),
+        "languages": List<String>.from(languages.map((x) => x)),
         "last_air_date":
             "${lastAirDate.year.toString().padLeft(4, '0')}-${lastAirDate.month.toString().padLeft(2, '0')}-${lastAirDate.day.toString().padLeft(2, '0')}",
         "last_episode_to_air": lastEpisodeToAir.toJson(),
         "name": name,
         "next_episode_to_air": nextEpisodeToAir,
-        "networks": List<dynamic>.from(networks.map((x) => x.toJson())),
+        "networks": List<Network>.from(networks.map((x) => x.toJson())),
         "number_of_episodes": numberOfEpisodes,
         "number_of_seasons": numberOfSeasons,
-        "origin_country": List<dynamic>.from(originCountry.map((x) => x)),
+        "origin_country": List<String>.from(originCountry.map((x) => x)),
         "original_language": originalLanguage,
         "original_name": originalName,
         "overview": overview,
         "popularity": popularity,
         "poster_path": posterPath,
         "production_companies":
-            List<dynamic>.from(productionCompanies.map((x) => x.toJson())),
-        "seasons": List<dynamic>.from(seasons.map((x) => x.toJson())),
+            List<Network>.from(productionCompanies.map((x) => x.toJson())),
+        "seasons": List<Season>.from(seasons.map((x) => x.toJson())),
         "status": status,
         "type": type,
         "vote_average": voteAverage,
