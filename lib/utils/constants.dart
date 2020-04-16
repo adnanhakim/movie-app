@@ -1,5 +1,5 @@
 class Constants {
-  static const String API_KEY = '7f1c5b6bcdc0417095c1df13c485f647';
+  static const String API_KEY = 'YOUR_TMDB_API_KEY';
 
   static const String PROFILE_IMAGE_NOT_FOUND =
       'https://i.stack.imgur.com/34AD2.jpg';
